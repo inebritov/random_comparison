@@ -32,38 +32,26 @@
 <body>
     <div style="float: right; text-align: right">
         <h2 style="text-align: center">Statistics:</h2>
-        <div>
-            <label>Method:</label>
-            <span>
-                <input id="vonNeumannMethod" value="vonNeumannMethod" name="method" type="radio" checked="checked"/>
-                <label for="vonNeumannMethod">Neumann</label>
-            </span>
-            <span>
-                <input id="mathRandom" value="mathRandom" name="method" type="radio"/>
-                <label for="mathRandom">Math</label>
-            </span>
-            <span>
-                <input id="mersenneTwister" value="mersenneTwister" name="method" type="radio"/>
-                <label for="mersenneTwister">Mersenne</label>
-            </span>
+        <div id="vonNeumannMethodStatistics">
+            <label for="vonNeumannMethodStatistics">von Neumann method: </label>
+            <span><label>AVG=</label><span class="avg"></span>;</span>
+            <span><label>Dispersion=</label><span class="dsp"></span>;</span>
+            <span><label>Min=</label><span class="min"></span>;</span>
+            <span><label>Max=</label><span class="max"></span>;</span>
         </div>
-        <div>
-            <span>
-                <label>AVG = </label>
-                <span id="avg"></span>;
-            </span>
-            <span>
-                <label>Dispersion = </label>
-                <span id="dsp"></span>;
-            </span>
-            <span>
-                <label>Min = </label>
-                <span id="min"></span>;
-            </span>
-            <span>
-                <label>Max = </label>
-                <span id="max"></span>;
-            </span>
+        <div id="mathRandomStatistics">
+            <label for="mathRandomStatistics">Math.random: </label>
+            <span><label>AVG=</label><span class="avg"></span>;</span>
+            <span><label>Dispersion=</label><span class="dsp"></span>;</span>
+            <span><label>Min=</label><span class="min"></span>;</span>
+            <span><label>Max=</label><span class="max"></span>;</span>
+        </div>
+        <div id="mersenneTwisterStatistics">
+            <label for="mersenneTwisterStatistics">Mersenne twister: </label>
+            <span><label>AVG=</label><span class="avg"></span>;</span>
+            <span><label>Dispersion=</label><span class="dsp"></span>;</span>
+            <span><label>Min=</label><span class="min"></span>;</span>
+            <span><label>Max=</label><span class="max"></span>;</span>
         </div>
     </div>
 
