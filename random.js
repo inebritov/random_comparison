@@ -214,10 +214,7 @@ var Chart = function() {
 document.addEventListener( 'DOMContentLoaded', function () {
     var chart = new Chart();
 
-    var options = document.querySelectorAll('.option');
-    for (var o in options) {
-        options[o].onchange = options[o].onkeyup = function () {
-            chart.redraw();
-        }
+    $('#redraw').onclick = function () {
+        chart.redraw();
     }
 }, false);

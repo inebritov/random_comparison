@@ -74,15 +74,20 @@
         <tbody>
             <tr>
                 <td><label for="rn">Чисел =</label></td>
-                <td><input id="rn" class="option" type="number" min="1" max="100000" value="50"/></td>
+                <td><input id="rn" type="number" min="1" max="100000" value="50"/></td>
             </tr>
             <tr>
                 <td><label for="steps">Интервалов =</label></td>
-                <td><input id="steps" class="option" type="number" min="1" max="100000" value="10"/></td>
+                <td><input id="steps" type="number" min="1" max="100000" value="10"/></td>
             </tr>
             <tr>
                 <td><label for="precision">Округление =</label></td>
-                <td><input id="precision" class="option" type="number" min="1" max="100000" value="1"/></td>
+                <td><input id="precision" type="number" min="1" max="100000" value="1"/></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center">
+                    <button id="redraw" type="button">Перерисовать</button>
+                </td>
             </tr>
         </tbody>
     </table>
