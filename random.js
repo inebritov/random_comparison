@@ -5,6 +5,7 @@ $(document).ready(function() {
         $steps = $('#steps'),
         next = 1,
         max = 993989421568648,
+        mt = new MersenneTwister(),
 
         getN = function() {
             return Math.abs(parseInt($N.val()));
@@ -68,7 +69,7 @@ $(document).ready(function() {
         },
 
         generateSelf = function() {
-            return Math.mersenneTwisterRandom();
+            return mt.real();
         },
 
         getSeries = function() {
