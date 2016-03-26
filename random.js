@@ -175,22 +175,22 @@ var Chart = function() {
                 type: 'column'
             },
             title: {
-                text: 'Моделирование случайных величин',
+                text: 'Simulation of random numbers',
                 x: -20
             },
             subtitle: {
-                text: 'Методы исследования и моделирования информационных процессов',
+                text: 'Methods of research and modeling information processes',
                 x: -20
             },
             xAxis: {
                 title: {
-                    text: 'Случайное число'
+                    text: 'Random number interval'
                 },
                 categories: getCategories()
             },
             yAxis: {
                 title: {
-                    text: 'Количество повторений'
+                    text: 'Random numbers in the interval'
                 },
                 tickInterval: 1,
                 min: 0
@@ -201,9 +201,9 @@ var Chart = function() {
                 }
             },
             series: [
-                {name: 'Метод фон-Неймана', data: getSeries('vonNeumannMethod')},
+                {name: 'von Neumann method', data: getSeries('vonNeumannMethod')},
                 {name: 'Math.random', data: getSeries('mathRandom')},
-                {name: 'Вихрь Мерсенна', data: getSeries('mersenneTwister')}
+                {name: 'Mersenne twister', data: getSeries('mersenneTwister')}
             ]
         });
     };

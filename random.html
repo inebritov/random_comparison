@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
-<head lang="ru">
+<head lang="en">
     <meta charset="UTF-8">
-    <title>Моделирование случайных величин</title>
+    <title>Simulation of random numbers</title>
 
     <script src="highcharts.js"></script>
     <script src="mersenne-twister.js"></script>
@@ -27,39 +27,37 @@
 </head>
 <body>
     <div style="float: right; text-align: right">
-        <h2 style="text-align: center">Статистики:</h2>
+        <h2 style="text-align: center">Statistics:</h2>
         <div>
-            <label>Метод:</label>
+            <label>Method:</label>
             <span>
                 <input id="vonNeumannMethod" value="vonNeumannMethod" name="method" type="radio" checked="checked"/>
-                <label for="vonNeumannMethod"> Фон-Неймана</label>
+                <label for="vonNeumannMethod">Neumann</label>
             </span>
             <span>
                 <input id="mathRandom" value="mathRandom" name="method" type="radio"/>
-                <label for="mathRandom">Math.random</label>
+                <label for="mathRandom">Math</label>
             </span>
             <span>
                 <input id="mersenneTwister" value="mersenneTwister" name="method" type="radio"/>
-                <label for="mersenneTwister">Вихрь Мерсенна</label>
+                <label for="mersenneTwister">Mersenne</label>
             </span>
         </div>
         <div>
             <span>
-                <label>Мат. ожидание = </label>
+                <label>AVG = </label>
                 <span id="avg"></span>;
             </span>
             <span>
-                <label>Дисперсия = </label>
+                <label>Dispersion = </label>
                 <span id="dsp"></span>;
             </span>
-        </div>
-        <div>
             <span>
-                <label>Минимум = </label>
+                <label>Min = </label>
                 <span id="min"></span>;
             </span>
             <span>
-                <label>Максимум = </label>
+                <label>Max = </label>
                 <span id="max"></span>;
             </span>
         </div>
@@ -68,25 +66,25 @@
     <table>
         <thead>
             <tr>
-                <th colspan="2"><h2>Установки:</h2></th>
+                <th colspan="2"><h2>Settings:</h2></th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td><label for="rn">Чисел =</label></td>
+                <td><label for="rn">Randoms number =</label></td>
                 <td><input id="rn" type="number" min="1" max="100000" value="50"/></td>
             </tr>
             <tr>
-                <td><label for="steps">Интервалов =</label></td>
+                <td><label for="steps">Intervals =</label></td>
                 <td><input id="steps" type="number" min="1" max="100000" value="10"/></td>
             </tr>
             <tr>
-                <td><label for="precision">Округление =</label></td>
+                <td><label for="precision" title="Floating point decimals">Rounding =</label></td>
                 <td><input id="precision" type="number" min="1" max="100000" value="1"/></td>
             </tr>
             <tr>
                 <td colspan="2" style="text-align: center">
-                    <button id="redraw" type="button">Перерисовать</button>
+                    <button id="redraw" type="button">Redraw</button>
                 </td>
             </tr>
         </tbody>
