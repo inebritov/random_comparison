@@ -1,11 +1,18 @@
 $(document).ready(function() {
-    var $chart = $('#container');
+    var $chart = $('#container'),
         $N = $('#N'),
         $precision = $('#precision'),
         $steps = $('#steps'),
-        next = 1,
-        max = 993989421568648,
+        $avg = $('#avg'),
+        $vrn = $('#vrn'),
+        $min = $('#min'),
+        $max = $('#max'),
+        iteration = 0,
         mt = new MersenneTwister(),
+
+        getMethod = function() {
+            return $('input[name=method]:checked').attr('id');
+        },
 
         getN = function() {
             return Math.abs(parseInt($N.val()));
@@ -45,11 +52,12 @@ $(document).ready(function() {
             return categories;
         },
 
-        generateNeuman = function(iteration) {
+        generateNeuman = function() {
             var rnd = 0.123456789,
-                res = rnd;
+                res = rnd,
+                j = iteration++;
 
-            while (iteration-->0){
+            while (j-- > 0) {
                 res*=res; res%=1;
                 res = parseFloat('0.' + res.toString().slice(3, 9));
                 var str = res.toString();
@@ -68,82 +76,71 @@ $(document).ready(function() {
             return Math.random();
         },
 
-        generateSelf = function() {
+        generateMersenne = function() {
             return mt.real();
         },
 
         getSeries = function() {
-            var n = getN(), neuman = [], random = [], self = [],
-                avgN = 0, varN = 0, avgR = 0, varR = 0, avgS = 0, varS = 0,
+            var n = getN(), method = getMethod(), result = [],
+                avg = 0, vrn = 0, min = n, max = 0,
                 intervals = getIntervals();
 
-            for (var i = 0; i < intervals.length; i++) {
-                neuman.push({y:0});
-                random.push({y:0});
-                self.push({y:0});
+            switch (method) {
+                case 'neuman': method = generateNeuman; break;
+                case 'random': method = generateRandom; break;
+                case 'mersenne': method = generateMersenne; break;
             }
 
-            for (var i = 0; i < n; i++) {
-                var neumanVal = generateNeuman(i);
-                var randomVal = generateRandom();
-                var selfVal = generateSelf();
+            for (var i = 0; i < intervals.length; i++) {
+                result.push({y:0});
+            }
+
+            for (i = 0; i < n; i++) {
+                var val = method.call();
+                avg += val;
+                vrn += val*val;
 
                 for (var j = 0; j < intervals.length; j++) {
-                    if (intervals[j].from <= neumanVal && neumanVal < intervals[j].to) {
-                        avgN += neumanVal;
-                        varN += neumanVal*neumanVal;
-                        neuman[j].y++;
-                    }
-                    if (intervals[j].from <= randomVal && randomVal < intervals[j].to) {
-                        avgR += randomVal;
-                        varR += randomVal*randomVal;
-                        random[j].y++;
-                    }
-                    if (intervals[j].from <= selfVal && selfVal < intervals[j].to) {
-                        avgS += selfVal;
-                        varS += selfVal*selfVal;
-                        self[j].y++;
+                    if (intervals[j].from <= val && val < intervals[j].to) {
+                        result[j].y++;
                     }
                 }
             }
 
-            varN -= (avgN*avgN/n)/(n-1);
-            varR -= (avgN*avgN/n)/(n-1);
-            varS -= (avgN*avgN/n)/(n-1);
-            avgN /= n; avgR /= n; avgS /= n;
+            for (i = 0; i < result.length; i++) {
+                if (result[i].y > max) {
+                    max = result[i].y;
+                }
 
-            $('#avg-neuman').html(avgN); $('#var-neuman').html(varN);
-            $('#avg-random').html(avgR); $('#var-random').html(varR);
-            $('#avg-self').html(avgS); $('#var-self').html(varS);
+                if (result[i].y < min) {
+                    min = result[i].y;
+                }
+            }
+
+            avg /= n;
+            vrn = vrn/n - avg*avg;
+            iteration = 0;
+
+            $avg.html(avg.toPrecision(4));
+            $vrn.html(vrn.toPrecision(4));
+            $min.html(min);
+            $max.html(max);
 
             return [{
-                name: 'Метод фон Неймана',
-                color: '#7cb5ec',
-                gapSize: getStepSize().toPrecision(getPrecision()),
-                data: neuman
-            }, {
-                name: 'Обычный Random',
-                color: '#434348',
-                gapSize: getStepSize().toPrecision(getPrecision()),
-                data: random
-            }, {
-                name: 'Вихрь Мерсенна',
-                color: '#90ed7d',
-                gapSize: getStepSize().toPrecision(getPrecision()),
-                data: self
+                showInLegend: false,
+                data: result
             }];
         },
-
 
         redraw = function() {
             $chart = new Highcharts.Chart({
                 chart: {
                     renderTo: 'container',
-                    defaultSeriesType: 'line'
+                    defaultSeriesType: 'column'
                 },
                 title: {
                     text: 'Моделирование случайных величин',
-                    x: -20 //center
+                    x: -20
                 },
                 subtitle: {
                     text: 'Методы исследования и моделирования информационных процессов',
@@ -159,21 +156,12 @@ $(document).ready(function() {
                     title: {
                         text: 'Количество повторений'
                     },
-                    plotLines: [{
-                        value: 0,
-                        width: 1,
-                        color: '#808080'
-                    }]
+                    tickInterval: 1,
+                    min: 0
                 },
                 tooltip: {
-                    headerFormat: '<b>{series.name}</b><br />',
-                    pointFormat: '{point.y}'
-                },
-                legend: {
-                    layout: 'vertical',
-                    align: 'right',
-                    verticalAlign: 'middle',
-                    borderWidth: 0
+                    headerFormat: '<b>{point.y}</b>',
+                    pointFormat: ''
                 },
                 series: getSeries()
             });
