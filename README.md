@@ -1,4 +1,4 @@
-# Comparison of pseudorandom number generator (PRNG) algorithms.
+# Comparison of [PRNG](https://en.wikipedia.org/wiki/Pseudorandom_number_generator) algorithms.
 
 Simple form to compare three PRNG algorithms.
 
