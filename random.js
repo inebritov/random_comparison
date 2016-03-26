@@ -7,10 +7,6 @@ var Settings = function () {
         $precision = $('#precision'),
         $steps = $('#steps');
 
-    this.getMethod = function() {
-        return $('input[name=method]:checked').value;
-    };
-
     this.getRandomsNumber = function() {
         return Math.abs(parseInt($randomsNumber.value));
     };
