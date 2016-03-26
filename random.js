@@ -111,7 +111,7 @@ var Chart = function() {
         return categories;
     };
 
-    var getSeries = function() {
+    var getSeries = function(method) {
         var randomsNumber = settings.getRandomsNumber(),
             sum = 0, squaresSum = 0, min = randomsNumber, max = 0,
             intervals = getIntervals(),
@@ -122,8 +122,7 @@ var Chart = function() {
         }
 
         for (i = 0; i < randomsNumber; i++) {
-            var method = settings.getMethod(),
-                val = random[method].call(random);
+            var val = random[method].call(random);
 
             sum += val;
             squaresSum += val * val;
@@ -148,17 +147,14 @@ var Chart = function() {
         random.resetVonNeumannSeed();
         statistics.update(sum, squaresSum, randomsNumber, min, max);
 
-        return [{
-            showInLegend: false,
-            data: result
-        }];
+        return result;
     };
 
     this.redraw = function() {
         $chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'chart',
-                defaultSeriesType: 'column'
+                type: 'column'
             },
             title: {
                 text: 'Моделирование случайных величин',
@@ -182,10 +178,15 @@ var Chart = function() {
                 min: 0
             },
             tooltip: {
-                headerFormat: '<b>{point.y}</b>',
-                pointFormat: ''
+                formatter: function () {
+                    return this.series.name + ': <b>' + this.point.y + '</b><br/>';
+                }
             },
-            series: getSeries()
+            series: [
+                {name: 'Метод фон-Неймана', data: getSeries('vonNeumannMethod')},
+                {name: 'Math.random', data: getSeries('mathRandom')},
+                {name: 'Вихрь Мерсенна', data: getSeries('mersenneTwister')}
+            ]
         });
     };
 
