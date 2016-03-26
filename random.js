@@ -2,178 +2,203 @@ var $ = function(selector) {
     return document.querySelector(selector);
 };
 
-document.addEventListener( 'DOMContentLoaded', function () {
-    var $chart = $('#chart'),
-        $N = $('#rn'),
+var Settings = function () {
+    var $randomsNumber = $('#rn'),
         $precision = $('#precision'),
-        $steps = $('#steps'),
-        $avg = $('#avg'),
+        $steps = $('#steps');
+
+    this.getMethod = function() {
+        return $('input[name=method]:checked').value;
+    };
+
+    this.getRandomsNumber = function() {
+        return Math.abs(parseInt($randomsNumber.value));
+    };
+
+    this.getPrecision = function() {
+        return Math.abs(parseInt($precision.value));
+    };
+
+    this.getStepSize = function() {
+        return 1 / Math.abs(parseInt($steps.value));
+    };
+};
+
+var Statistics = function () {
+    var $avg = $('#avg'),
         $dsp = $('#dsp'),
         $min = $('#min'),
-        $max = $('#max'),
-        neumanSeed = 0,
-        mt = new MersenneTwister(),
+        $max = $('#max');
 
-        getMethod = function() {
-            return $('input[name=method]:checked').value;
-        },
+    this.update = function(sum, squaresSum, randomsNumber, min, max) {
+        var avg = sum / randomsNumber,
+            dsp = squaresSum / randomsNumber - avg * avg;
 
-        getN = function() {
-            return Math.abs(parseInt($N.value));
-        },
+        $avg.innerHTML = avg.toPrecision(4);
+        $dsp.innerHTML = dsp.toPrecision(4);
+        $min.innerHTML = min;
+        $max.innerHTML = max;
+    };
+};
 
-        getPrecision = function() {
-            return Math.abs(parseInt($precision.value));
-        },
+var PseudoRandomNumberGenerator = function () {
+    var vonNeumannSeed = 0,
+        mt = new MersenneTwister();
 
-        getStepSize = function() {
-            return 1 / Math.abs(parseInt($steps.value));
-        },
+    this.resetVonNeumannSeed = function() {
+        vonNeumannSeed = 0;
+    };
 
-        getIntervals = function() {
-            var intervals = [],
-                step = getStepSize();
+    this.vonNeumannMethod = function() {
+        var rnd = 0.123456789,
+            res = rnd,
+            j = vonNeumannSeed++;
 
-            for (var i = 0; i+step < 1 && Math.abs(1 - i+step) > Math.pow(0.1, getPrecision()); i+=step) {
-                intervals.push({from: i, to:i+step});
-            }
-
-            intervals[intervals.length-1].to = 1;
-
-            return intervals;
-        },
-
-        getCategories = function() {
-            var categories = [],
-                intervals = getIntervals(),
-                precision = getPrecision();
-
-            for (var i = 0; i < intervals.length; i++) {
-                categories.push(intervals[i].from.toPrecision(precision) + ' - ' +
-                    intervals[i].to.toPrecision(precision));
-            }
-
-            return categories;
-        },
-
-        generateNeuman = function() {
-            var rnd = 0.123456789,
-                res = rnd,
-                j = neumanSeed++;
-
-            while (j-- > 0) {
-                res*=res; res%=1;
-                res = parseFloat('0.' + res.toString().slice(3, 9));
-                var str = res.toString();
-                for (var i = 3; i < 10; i++) {
-                    if (str[i] == '0') {
-                        res += rnd;
-                        break;
-                    }
+        while (j-- > 0) {
+            res*=res; res%=1;
+            res = parseFloat('0.' + res.toString().slice(3, 9));
+            var str = res.toString();
+            for (var i = 3; i < 10; i++) {
+                if (str[i] == '0') {
+                    res += rnd;
+                    break;
                 }
             }
+        }
 
-            return res;
-        },
+        return res;
+    };
 
-        generateRandom = function() {
-            return Math.random();
-        },
+    this.mathRandom = function() {
+        return Math.random();
+    };
 
-        generateMersenne = function() {
-            return mt.real();
-        },
+    this.mersenneTwister = function() {
+        return mt.real();
+    };
+};
 
-        getSeries = function() {
-            var n = getN(), method = getMethod(), result = [],
-                avg = 0, dsp = 0, min = n, max = 0,
-                intervals = getIntervals();
+var Chart = function() {
+    var $chart = $('#chart'),
+        settings = new Settings(),
+        statistics = new Statistics(),
+        random = new PseudoRandomNumberGenerator();
 
-            switch (method) {
-                case 'neuman': method = generateNeuman; break;
-                case 'random': method = generateRandom; break;
-                case 'mersenne': method = generateMersenne; break;
-            }
+    var getIntervals = function() {
+        var intervals = [],
+            step = settings.getStepSize(),
+            precision = settings.getPrecision();
 
-            for (var i = 0; i < intervals.length; i++) {
-                result.push({y:0});
-            }
+        for (var i = 0; i + step < 1 && Math.abs(1 - i+step) > Math.pow(0.1, precision); i += step) {
+            intervals.push({from: i, to: i + step});
+        }
 
-            for (i = 0; i < n; i++) {
-                var val = method.call();
-                avg += val;
-                dsp += val*val;
+        intervals[intervals.length - 1].to = 1;
 
-                for (var j = 0; j < intervals.length; j++) {
-                    if (intervals[j].from <= val && val < intervals[j].to) {
-                        result[j].y++;
-                    }
+        return intervals;
+    };
+
+    var getCategories = function() {
+        var categories = [],
+            intervals = getIntervals(),
+            precision = settings.getPrecision();
+
+        for (var i = 0; i < intervals.length; i++) {
+            categories.push(intervals[i].from.toPrecision(precision) + ' - ' +
+                intervals[i].to.toPrecision(precision));
+        }
+
+        return categories;
+    };
+
+    var getSeries = function() {
+        var randomsNumber = settings.getRandomsNumber(),
+            sum = 0, squaresSum = 0, min = randomsNumber, max = 0,
+            intervals = getIntervals(),
+            result = [];
+
+        for (var i = 0; i < intervals.length; i++) {
+            result.push({y: 0});
+        }
+
+        for (i = 0; i < randomsNumber; i++) {
+            var method = settings.getMethod(),
+                val = random[method].call(random);
+
+            sum += val;
+            squaresSum += val * val;
+
+            for (var j = 0; j < intervals.length; j++) {
+                if (intervals[j].from <= val && val < intervals[j].to) {
+                    result[j].y++;
                 }
             }
+        }
 
-            for (i = 0; i < result.length; i++) {
-                if (result[i].y > max) {
-                    max = result[i].y;
-                }
-
-                if (result[i].y < min) {
-                    min = result[i].y;
-                }
+        for (i = 0; i < result.length; i++) {
+            if (result[i].y > max) {
+                max = result[i].y;
             }
 
-            avg /= n;
-            dsp = dsp/n - avg*avg;
-            neumanSeed = 0;
+            if (result[i].y < min) {
+                min = result[i].y;
+            }
+        }
 
-            $avg.innerHTML = avg.toPrecision(4);
-            $dsp.innerHTML = dsp.toPrecision(4);
-            $min.innerHTML = min;
-            $max.innerHTML = max;
+        random.resetVonNeumannSeed();
+        statistics.update(sum, squaresSum, randomsNumber, min, max);
 
-            return [{
-                showInLegend: false,
-                data: result
-            }];
-        },
+        return [{
+            showInLegend: false,
+            data: result
+        }];
+    };
 
-        redraw = function() {
-            $chart = new Highcharts.Chart({
-                chart: {
-                    renderTo: 'chart',
-                    defaultSeriesType: 'column'
-                },
+    this.redraw = function() {
+        $chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'chart',
+                defaultSeriesType: 'column'
+            },
+            title: {
+                text: 'Моделирование случайных величин',
+                x: -20
+            },
+            subtitle: {
+                text: 'Методы исследования и моделирования информационных процессов',
+                x: -20
+            },
+            xAxis: {
                 title: {
-                    text: 'Моделирование случайных величин',
-                    x: -20
+                    text: 'Случайное число'
                 },
-                subtitle: {
-                    text: 'Методы исследования и моделирования информационных процессов',
-                    x: -20
+                categories: getCategories()
+            },
+            yAxis: {
+                title: {
+                    text: 'Количество повторений'
                 },
-                xAxis: {
-                    title: {
-                        text: 'Случайное число'
-                    },
-                    categories: getCategories()
-                },
-                yAxis: {
-                    title: {
-                        text: 'Количество повторений'
-                    },
-                    tickInterval: 1,
-                    min: 0
-                },
-                tooltip: {
-                    headerFormat: '<b>{point.y}</b>',
-                    pointFormat: ''
-                },
-                series: getSeries()
-            });
-        };
+                tickInterval: 1,
+                min: 0
+            },
+            tooltip: {
+                headerFormat: '<b>{point.y}</b>',
+                pointFormat: ''
+            },
+            series: getSeries()
+        });
+    };
 
-    redraw();
+    this.redraw();
+};
+
+document.addEventListener( 'DOMContentLoaded', function () {
+    var chart = new Chart();
+
     var options = document.querySelectorAll('.option');
     for (var o in options) {
-        options[o].onchange = options[o].onkeyup = redraw;
+        options[o].onchange = options[o].onkeyup = function () {
+            chart.redraw();
+        }
     }
-}, false );
+}, false);
