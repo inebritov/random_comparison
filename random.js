@@ -163,7 +163,6 @@ var Chart = function() {
         random.resetVonNeumannSeed();
         statistics.update(method, sum, squaresSum, randomsNumber, min, max);
         statistics.show(statistics.getMethod());
-        console.log(statistics.getMethod());
 
         return result;
     };
