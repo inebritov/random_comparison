@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Моделирование случайных величин</title>
 
-    <script src="jquery.js" type="text/javascript"></script>
     <script src="highcharts.js"></script>
     <script src="mersenne-twister.js"></script>
     <script src="random.js"></script>
@@ -16,68 +15,68 @@
 <body>
     <table style="float:right">
         <thead>
-        <tr>
-            <th colspan="2"><h2>Характеристики:</h2></th>
-        </tr>
+            <tr>
+                <th colspan="2"><h2>Характеристики:</h2></th>
+            </tr>
         </thead>
         <tbody>
-        <tr>
-            <td><label>Мат. ожидание =</label></td>
-            <td><div id="avg"></div></td>
-        </tr>
-        <tr>
-            <td><label>Дисперсия =</label></td>
-            <td><div id="vrn"></div></td>
-        </tr>
-        <tr>
-            <td><label>Минимум = </label></td>
-            <td><div id="min"></div></td>
-        </tr>
-        <tr>
-            <td><label>Максимум = </label></td>
-            <td><div id="max"></div></td>
-        </tr>
+            <tr>
+                <td><label>Мат. ожидание =</label></td>
+                <td><div id="avg"></div></td>
+            </tr>
+            <tr>
+                <td><label>Дисперсия =</label></td>
+                <td><div id="dsp"></div></td>
+            </tr>
+            <tr>
+                <td><label>Минимум = </label></td>
+                <td><div id="min"></div></td>
+            </tr>
+            <tr>
+                <td><label>Максимум = </label></td>
+                <td><div id="max"></div></td>
+            </tr>
         </tbody>
     </table>
 
     <table>
         <thead>
-        <tr>
-            <th colspan="2"><h2>Установки:</h2></th>
-        </tr>
+            <tr>
+                <th colspan="2"><h2>Установки:</h2></th>
+            </tr>
         </thead>
         <tbody>
-        <tr>
-            <td><label for="N">Чисел =</label></td>
-            <td><input id="N" class="option" type="number" min="1" max="100000" value="50"/></td>
-        </tr>
-        <tr>
-            <td><label for="steps">Интервалов =</label></td>
-            <td><input id="steps" class="option" type="number" min="1" max="100000" value="10"/></td>
-        </tr>
-        <tr>
-            <td><label for="precision">Округление =</label></td>
-            <td><input id="precision" class="option" type="number" min="1" max="100000" value="1"/></td>
-        </tr>
-        <tr>
-            <td><label for="method">Метод:</label></td>
-            <td id="method" colspan="2">
-                <div>
-                    <input id="neuman" name="method" class="option" type="radio" checked="checked"/>
-                    <label for="neuman"> Фон-Неймана</label>
-                </div>
-                <div>
-                    <input id="random" name="method" class="option" type="radio"/>
-                    <label for="random">Math.random</label>
-                </div>
-                <div>
-                    <input id="mersenne" name="method" class="option" type="radio"/>
-                    <label for="mersenne">Вихрь Мерсенна</label>
-                </div>
-            <td>
-        </tr>
+            <tr>
+                <td><label for="rn">Чисел =</label></td>
+                <td><input id="rn" class="option" type="number" min="1" max="100000" value="50"/></td>
+            </tr>
+            <tr>
+                <td><label for="steps">Интервалов =</label></td>
+                <td><input id="steps" class="option" type="number" min="1" max="100000" value="10"/></td>
+            </tr>
+            <tr>
+                <td><label for="precision">Округление =</label></td>
+                <td><input id="precision" class="option" type="number" min="1" max="100000" value="1"/></td>
+            </tr>
+            <tr>
+                <td><label for="method">Метод:</label></td>
+                <td id="method" colspan="2">
+                    <div>
+                        <input id="neuman" value="neuman" name="method" class="option" type="radio" checked="checked"/>
+                        <label for="neuman"> Фон-Неймана</label>
+                    </div>
+                    <div>
+                        <input id="random" value="random" name="method" class="option" type="radio"/>
+                        <label for="random">Math.random</label>
+                    </div>
+                    <div>
+                        <input id="mersenne" value="mersenne" name="method" class="option" type="radio"/>
+                        <label for="mersenne">Вихрь Мерсенна</label>
+                    </div>
+                <td>
+            </tr>
         </tbody>
     </table>
-    <div id="container" style="min-width: 310px; height: 250px; margin: 0 auto;border: 1px solid #000"></div>
+    <div id="chart" style="min-width: 310px; height: 250px; margin: 0 auto;border: 1px solid #000"></div>
 </body>
 </html>

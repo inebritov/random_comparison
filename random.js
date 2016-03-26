@@ -1,29 +1,33 @@
-$(document).ready(function() {
-    var $chart = $('#container'),
-        $N = $('#N'),
+var $ = function(selector) {
+    return document.querySelector(selector);
+};
+
+document.addEventListener( 'DOMContentLoaded', function () {
+    var $chart = $('#chart'),
+        $N = $('#rn'),
         $precision = $('#precision'),
         $steps = $('#steps'),
         $avg = $('#avg'),
-        $vrn = $('#vrn'),
+        $dsp = $('#dsp'),
         $min = $('#min'),
         $max = $('#max'),
-        iteration = 0,
+        neumanSeed = 0,
         mt = new MersenneTwister(),
 
         getMethod = function() {
-            return $('input[name=method]:checked').attr('id');
+            return $('input[name=method]:checked').value;
         },
 
         getN = function() {
-            return Math.abs(parseInt($N.val()));
+            return Math.abs(parseInt($N.value));
         },
 
         getPrecision = function() {
-            return Math.abs(parseInt($precision.val()));
+            return Math.abs(parseInt($precision.value));
         },
 
         getStepSize = function() {
-            return 1 / Math.abs(parseInt($steps.val()));
+            return 1 / Math.abs(parseInt($steps.value));
         },
 
         getIntervals = function() {
@@ -55,7 +59,7 @@ $(document).ready(function() {
         generateNeuman = function() {
             var rnd = 0.123456789,
                 res = rnd,
-                j = iteration++;
+                j = neumanSeed++;
 
             while (j-- > 0) {
                 res*=res; res%=1;
@@ -82,7 +86,7 @@ $(document).ready(function() {
 
         getSeries = function() {
             var n = getN(), method = getMethod(), result = [],
-                avg = 0, vrn = 0, min = n, max = 0,
+                avg = 0, dsp = 0, min = n, max = 0,
                 intervals = getIntervals();
 
             switch (method) {
@@ -98,7 +102,7 @@ $(document).ready(function() {
             for (i = 0; i < n; i++) {
                 var val = method.call();
                 avg += val;
-                vrn += val*val;
+                dsp += val*val;
 
                 for (var j = 0; j < intervals.length; j++) {
                     if (intervals[j].from <= val && val < intervals[j].to) {
@@ -118,13 +122,13 @@ $(document).ready(function() {
             }
 
             avg /= n;
-            vrn = vrn/n - avg*avg;
-            iteration = 0;
+            dsp = dsp/n - avg*avg;
+            neumanSeed = 0;
 
-            $avg.html(avg.toPrecision(4));
-            $vrn.html(vrn.toPrecision(4));
-            $min.html(min);
-            $max.html(max);
+            $avg.innerHTML = avg.toPrecision(4);
+            $dsp.innerHTML = dsp.toPrecision(4);
+            $min.innerHTML = min;
+            $max.innerHTML = max;
 
             return [{
                 showInLegend: false,
@@ -135,7 +139,7 @@ $(document).ready(function() {
         redraw = function() {
             $chart = new Highcharts.Chart({
                 chart: {
-                    renderTo: 'container',
+                    renderTo: 'chart',
                     defaultSeriesType: 'column'
                 },
                 title: {
@@ -168,5 +172,8 @@ $(document).ready(function() {
         };
 
     redraw();
-    $('body').on('change', '.option', redraw);
-});
+    var options = document.querySelectorAll('.option');
+    for (var o in options) {
+        options[o].onchange = options[o].onkeyup = redraw;
+    }
+}, false );
