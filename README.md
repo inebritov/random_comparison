@@ -1,12 +1,12 @@
-# Сравнение алгоритмов генерации псевдо-случайных велечин
+# Comparison of pseudorandom number generator (PRNG) algorithms.
 
-Простая форма для сравнения 3-х алгоритмов генерирования случайных чисел.
+Simple form to compare three PRNG algorithms.
 
-## Возможности
+## Capabilities
 
-1. Регулировка
-    1.1. Количества генерируемых велечин
-    1.2. Количества промежутков подсчета результата
-    1.3. Точности отображаемых данных
-2. Подсчет среднего арифметического и дисперсии для каждого из методов
-3. Сравнение конкретных графиков путем исключения не учавствующих в сравнении
+1. Control:
+    1. Number of generated numbers
+    2. Number of intervals from 0 to 1
+    3. Decimals in floating point numbers
+2. Calculating AVG and dispersion for each method Подсчет среднего арифметического и дисперсии для каждого из методов
+3. Excluding / including methods visibility on the graph
