@@ -21,19 +21,39 @@ var Settings = function () {
 };
 
 var Statistics = function () {
-    var $avg = $('#avg'),
+    var self = this,
+        $avg = $('#avg'),
         $dsp = $('#dsp'),
         $min = $('#min'),
-        $max = $('#max');
+        $max = $('#max'),
+        map = {vonNeumannMethod: {}, mathRandom: {}, mersenneTwister: {}};
 
-    this.update = function(sum, squaresSum, randomsNumber, min, max) {
+    var methods = document.querySelectorAll('input[name=method]');
+    for (var m in methods) {
+        methods[m].onchange = function () {
+            self.show(self.getMethod());
+        }
+    }
+
+    this.update = function(method, sum, squaresSum, randomsNumber, min, max) {
         var avg = sum / randomsNumber,
             dsp = squaresSum / randomsNumber - avg * avg;
 
-        $avg.innerHTML = avg.toPrecision(4);
-        $dsp.innerHTML = dsp.toPrecision(4);
-        $min.innerHTML = min;
-        $max.innerHTML = max;
+        map[method].avg = avg;
+        map[method].dsp = dsp;
+        map[method].min = min;
+        map[method].max = max;
+    };
+
+    this.show = function(method) {
+        $avg.innerHTML = map[method].avg.toPrecision(4);
+        $dsp.innerHTML = map[method].dsp.toPrecision(4);
+        $min.innerHTML = map[method].min;
+        $max.innerHTML = map[method].max;
+    };
+
+    this.getMethod = function() {
+        return $('input[name=method]:checked').value;
     };
 };
 
@@ -141,7 +161,9 @@ var Chart = function() {
         }
 
         random.resetVonNeumannSeed();
-        statistics.update(sum, squaresSum, randomsNumber, min, max);
+        statistics.update(method, sum, squaresSum, randomsNumber, min, max);
+        statistics.show(statistics.getMethod());
+        console.log(statistics.getMethod());
 
         return result;
     };
