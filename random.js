@@ -37,7 +37,7 @@ var PseudoRandomNumberGenerator = function () {
         mt = new MersenneTwister();
 
     this.resetVonNeumannSeed = function() {
-        vonNeumannSeed = 0;
+        vonNeumannSeed = Math.round(this.vonNeumannMethod() * 1000);
     };
 
     this.vonNeumannMethod = function() {
@@ -135,13 +135,13 @@ var Chart = function() {
             }
         }
 
-        random.resetVonNeumannSeed();
         statistics.update(method, sum, squaresSum, randomsNumber, min, max);
 
         return result;
     };
 
     this.redraw = function() {
+        random.resetVonNeumannSeed();
         $chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'chart',
